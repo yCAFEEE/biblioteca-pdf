@@ -1,0 +1,35 @@
+.pdfs-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pdfs-container ul{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    list-style-type: none;
+}
+
+.pdf-box{
+    width: 200px;
+    min-height: 100px;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+    border: solid 1px gray;
+}
+
+.pdf-box img{
+    width: 100%;
+    max-height: 100%;
+}
+
+.pdf-box a{
+    text-decoration: none;
+    text-align: justify;
+    color: blue;
+}
+
+.pdf-box a:hover{
+    text-decoration: underline;
+}

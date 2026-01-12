@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./Home.css"
 
 
 export default function Home(){
@@ -18,15 +19,22 @@ export default function Home(){
             <div className="content-container">
                 <h1>PDFs</h1>
                 {pdfs.length === 0 ? (
-                    <p>Nenhum arquivo PDF encontrado no caminho: ./client/public/pdfDir/</p>
+                    <div className="error-container">
+                        <h2>Erro</h2>
+                        <p>Erro no servidor ou nenhum arquivo PDF encontrado no caminho: ./client/public/pdfDir/</p>
+                    </div>
                 ) : (
-                <ul>
-                    {pdfs.map((pdf, idx) => (
-                        <li key={idx}>
-                            <a href={`http://localhost:3000${pdf.url}`}>{pdf.name}</a>
-                        </li>
-                    ))}
-                </ul>
+
+                <div className="pdfs-container">
+                    <ul>
+                        {pdfs.map((pdf, idx) => (
+                            <li className="pdf-box" key={idx}>
+                                <img src="../../pdf-placeholder.png" />
+                                <a href={`http://localhost:3000${pdf.url}`}>{pdf.name}</a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
                 )}
             </div>
         </main>
