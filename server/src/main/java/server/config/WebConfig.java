@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer{
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
-        registry.addResourceHandler("pdf-files/**")
+        registry.addResourceHandler("/pdfs-files/**")
             .addResourceLocations("file:../client/public/pdfDir/");
     }
 }

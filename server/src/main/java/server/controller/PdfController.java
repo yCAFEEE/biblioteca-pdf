@@ -28,7 +28,7 @@ public class PdfController{
 
                     Map<String, String> pdfInfo = new HashMap<>();
                     pdfInfo.put("name", name);
-                    pdfInfo.put("url", "/pdf-files/" + encodedName);
+                    pdfInfo.put("url", "/pdfs-files/" + encodedName);
 
                     list.add(pdfInfo);
                 }
