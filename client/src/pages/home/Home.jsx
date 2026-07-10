@@ -6,7 +6,7 @@ export default function Home(){
     const [pdfs, setPdfs] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:3000/pdfs")
+        fetch("http://localhost:8080/pdfs")
         .then(r => r.json())
         .then(setPdfs)
         .catch(err => {
@@ -30,7 +30,7 @@ export default function Home(){
                         {pdfs.map((pdf, idx) => (
                             <li className="pdf-box" key={idx}>
                                 <img src="../../pdf-placeholder.png" />
-                                <a href={`http://localhost:3000${pdf.url}`}>{pdf.name}</a>
+                                <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
                             </li>
                         ))}
                     </ul>
