@@ -1,3 +1,5 @@
+.gitattributes
+
 # Logs
 logs
 *.log
@@ -13,7 +15,7 @@ dist-ssr
 *.local
 
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -22,6 +24,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Arquivos spring boot
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+server/src/test/
 
 # Files inside pdfDir
 client/public/pdfDir/*
