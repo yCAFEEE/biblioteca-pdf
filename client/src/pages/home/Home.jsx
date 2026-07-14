@@ -14,10 +14,29 @@ export default function Home(){
         });
     }, []);
 
+    const handleFileUpload = (event) => {
+        const arquivoSelecionado = event.target.files[0];
+
+        if(!arquivoSelecionado) return;
+
+        const formData = new FormData();
+        formData.append("file", arquivoSelecionado);
+
+        fetch("http://localhost:8080/pdfs", {
+            method: "POST",
+            body: formData
+        })
+        .then(r => r.json())
+        .catch(err =>{
+            console.log("Falha ao enviar arquivo ", err);
+        })
+    }
+
     return(
         <main>
             <div className="content-container">
                 <h1>PDFs</h1>
+                <input type="file" accept=".pdf" onChange={handleFileUpload} id="upload-button"/>
                 {pdfs.length === 0 ? (
                     <div className="error-container">
                         <h2>Erro</h2>
