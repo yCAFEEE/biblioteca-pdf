@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -63,6 +65,24 @@ public class PdfController{
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao enviar o arquivo"));
+        }
+    }
+
+    @DeleteMapping("/pdfs/{filename:.+}")
+    public ResponseEntity<?> deletePdf(@PathVariable String filename){
+        try{
+            Path targetPath = pdfsDirPath.resolve(filename).normalize();
+
+            boolean deleted = Files.deleteIfExists(targetPath);
+
+            if(deleted){
+                return ResponseEntity.ok(Map.of("message", "PDF " + filename + " foi deletado"));
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Arquivo não encontrado"));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao excluir o arquivo"));
         }
     }
 }
