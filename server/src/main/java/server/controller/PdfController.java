@@ -3,16 +3,24 @@ package server.controller;
 import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class PdfController{
     private final String pdfsDir = "../client/public/pdfDir";
+    private final Path pdfsDirPath = Path.of(pdfsDir);
 
     @GetMapping("/pdfs")
     public ResponseEntity<?> listPdfs(){
@@ -40,4 +48,21 @@ public class PdfController{
         }
     }
     
+    @PostMapping("/pdfs")
+    public ResponseEntity<?> uploadPdf(@RequestParam MultipartFile file){
+        try{
+            String name = file.getOriginalFilename();
+            String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+    
+            Files.copy(file.getInputStream(), pdfsDirPath.resolve(name), StandardCopyOption.REPLACE_EXISTING);
+            Map<String, String> fileInfo = new HashMap<>();
+            fileInfo.put("name", name);
+            fileInfo.put("url", "/pdfs-files/" + encodedName);
+
+            return ResponseEntity.ok(fileInfo);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao enviar o arquivo"));
+        }
+    }
 }
