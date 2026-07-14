@@ -5,13 +5,15 @@ import "./Home.css"
 export default function Home(){
     const [pdfs, setPdfs] = useState([]);
 
-    useEffect(() => {
+    const buscarPdfs = () => {
         fetch("http://localhost:8080/pdfs")
         .then(r => r.json())
         .then(setPdfs)
-        .catch(err => {
-            console.error("Falha ao buscar PDFs", err);
-        });
+        .catch(err => console.error("Falha ao buscar PDFs", err));
+    };
+
+    useEffect(() => {
+        buscarPdfs();
     }, []);
 
     const handleFileUpload = (event) => {
@@ -27,10 +29,9 @@ export default function Home(){
             body: formData
         })
         .then(r => r.json())
-        .catch(err =>{
-            console.log("Falha ao enviar arquivo ", err);
-        })
-    }
+        .then(data => buscarPdfs())
+        .catch(err => console.error("Falha ao enviar arquivo ", err));
+    };
 
     return(
         <main>
@@ -43,7 +44,6 @@ export default function Home(){
                         <p>Erro no servidor ou nenhum arquivo PDF encontrado no caminho: ./client/public/pdfDir/</p>
                     </div>
                 ) : (
-
                 <div className="pdfs-container">
                     <ul>
                         {pdfs.map((pdf, idx) => (
