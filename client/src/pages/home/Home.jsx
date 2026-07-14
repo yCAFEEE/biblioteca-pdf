@@ -33,6 +33,15 @@ export default function Home(){
         .catch(err => console.error("Falha ao enviar arquivo ", err));
     };
 
+    const handleFileDelete = (nomeArquivo) => {
+        fetch(`http://localhost:8080/pdfs/${nomeArquivo}`, {
+            method: "DELETE"
+        })
+        .then(r => r.json())
+        .then(data => buscarPdfs())
+        .catch(err => console.error("Erro ao deletar arquivo", err));
+    };
+
     return(
         <main>
             <div className="content-container">
@@ -50,6 +59,7 @@ export default function Home(){
                             <li className="pdf-box" key={idx}>
                                 <img src="../../pdf-placeholder.png" />
                                 <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
+                                <button onClick={() => handleFileDelete(pdf.name)}>deletar</button>
                             </li>
                         ))}
                     </ul>
