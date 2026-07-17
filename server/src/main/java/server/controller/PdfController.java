@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -83,6 +85,27 @@ public class PdfController{
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao excluir o arquivo"));
+        }
+    }
+
+    @PutMapping("pdfs/{filename:.+}")
+    public ResponseEntity<?> renamePdf(@PathVariable String filename, @RequestBody Map<String,String> body) {
+        try{
+            String newName = body.get("newName");
+
+            if(newName.toLowerCase().endsWith(".pdf")){
+                newName += ".pdf";
+            }
+
+            Path sourcePath = pdfsDirPath.resolve(filename).normalize();
+            Path targetPath = pdfsDirPath.resolve(newName).normalize();
+
+            Files.move(sourcePath, targetPath);
+
+            return ResponseEntity.ok(Map.of("message", "Arquivo renomeado"));
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao renomear arquivo"));
         }
     }
 }
