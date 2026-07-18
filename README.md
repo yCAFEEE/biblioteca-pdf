@@ -1,5 +1,7 @@
 # 📚 Biblioteca PDF
-Projeto com a ideia de organizar arquivos PDFs em um único site.
+Projeto com a ideia de facilitar a organização de arquivos PDF em um único site e localmente.
+
+Na aplicação, são listados todos os arquivos com a extensão `.pdf` que estão no caminho `client/public/pdfDir/`. A interface permite o gerenciamento desses arquivos, sendo possível adicionar, renomear e deletar diretamente pelo frontend.
 
 ## Instalação e uso
 ### Dependências
@@ -18,9 +20,6 @@ Para iniciar o frontend, é necessário usar o comando `npm run dev` dentro da p
 
 #### Backend
 Para iniciar o backend, é necessário usar o comando `mvn spring-boot:run` dentro da pasta `server/`. Após isso, a url `http://localhost:8080/` poderá ser acessada e será possível fazer a comunicação com o frontend.
-
-## Ideia inicial do projeto
-Adicionar, remover e vizualizar um arquivo PDF localmente, sem utilizar um banco de dados. (quase um CRUD)
 
 ## Ferramentas usadas
 - **Frontend:** React (JavaScript)
