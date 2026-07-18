@@ -93,7 +93,7 @@ public class PdfController{
         try{
             String newName = body.get("newName");
 
-            if(newName.toLowerCase().endsWith(".pdf")){
+            if(!newName.toLowerCase().endsWith(".pdf")){
                 newName += ".pdf";
             }
 
