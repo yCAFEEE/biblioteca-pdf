@@ -42,6 +42,19 @@ export default function Home(){
         .catch(err => console.error("Erro ao deletar arquivo", err));
     };
 
+    const renameFile = (nomeAntigo) => {
+        let novoNome = prompt(`Digite o novo nome para ${nomeAntigo}: `);
+
+        fetch(`http://localhost:8080/pdfs/${nomeAntigo}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ newName: novoNome })
+        })
+        .then(r => r.json())
+        .then(data => buscarPdfs())
+        .catch(err => console.error("Erro ao renomear arquivo"));
+    };
+
     return(
         <main>
             <div className="content-container">
@@ -59,6 +72,7 @@ export default function Home(){
                             <li className="pdf-box" key={idx}>
                                 <img src="../../pdf-placeholder.png" />
                                 <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
+                                <button onClick={() => renameFile(pdf.name)}>renomear</button>
                                 <button onClick={() => handleFileDelete(pdf.name)}>deletar</button>
                             </li>
                         ))}
