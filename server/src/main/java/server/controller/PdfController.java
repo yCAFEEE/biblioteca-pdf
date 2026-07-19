@@ -10,6 +10,9 @@ import java.util.*;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,11 +23,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 public class PdfController{
     private final String pdfsDir = "../client/public/pdfDir";
     private final Path pdfsDirPath = Path.of(pdfsDir);
+
+    @PostConstruct
+    public void init(){
+        try{
+            if(!Files.exists(pdfsDirPath)){
+                Files.createDirectory(pdfsDirPath);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            System.err.println("Erro ao criar a pasta pdfDir/");
+        }
+    }
 
     @GetMapping("/pdfs")
     public ResponseEntity<?> listPdfs(){
