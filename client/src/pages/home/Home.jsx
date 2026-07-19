@@ -4,6 +4,7 @@ import "./Home.css"
 
 export default function Home(){
     const [pdfs, setPdfs] = useState([]);
+    const [ordenacao, setOrdenacao] = useState("az")
 
     const buscarPdfs = () => {
         fetch("http://localhost:8080/pdfs")
@@ -55,6 +56,18 @@ export default function Home(){
         .catch(err => console.error("Erro ao renomear arquivo"));
     };
 
+    const sortPdfs = () => {
+        const copiaPdfs = [...pdfs]
+        switch(ordenacao){
+            case "az": return copiaPdfs.sort((a, b) => a.name.localeCompare(b.name));
+            case "za": return copiaPdfs.sort((a, b) => b.name.localeCompare(a.name));
+            case "pag-cres": return copiaPdfs.sort((a, b) => a.pages - b.pages);
+            case "pag-decres": return copiaPdfs.sort((a, b) => b.pages - a.pages);
+            default: return copiaPdfs;
+        }
+    }
+
+    const pdfsOrdenados = sortPdfs();
     return(
         <main>
             <div className="content-container">
@@ -66,8 +79,15 @@ export default function Home(){
                     </div>
                 ) : (
                 <div className="pdfs-container">
+                    <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
+                        <option value="az">Ordem alfabética A-Z</option>
+                        <option value="za">Ordem alfabética Z-A</option>
+                        <option value="pag-cres">Ordem crescente de páginas</option>
+                        <option value="pag-decres">Ordem decrescente de páginas</option>
+                    </select>
+
                     <ul>
-                        {pdfs.map((pdf, idx) => (
+                        {pdfsOrdenados.map((pdf, idx) => (
                             <li className="pdf-box" key={idx}>
                                 <div className="pdf-buttons">
                                     <button onClick={() => renameFile(pdf.name)}>renomear</button>
