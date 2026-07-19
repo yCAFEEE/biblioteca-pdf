@@ -70,6 +70,10 @@ public class PdfController{
     public ResponseEntity<?> uploadPdf(@RequestParam MultipartFile file){
         try{
             String name = file.getOriginalFilename();
+            if(name == null || name.isBlank()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Nome do arquivo não pode ser vazio"));
+            }
+
             String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
     
             Files.copy(file.getInputStream(), pdfsDirPath.resolve(name), StandardCopyOption.REPLACE_EXISTING);
@@ -88,9 +92,11 @@ public class PdfController{
     public ResponseEntity<?> deletePdf(@PathVariable String filename){
         try{
             Path targetPath = pdfsDirPath.resolve(filename).normalize();
+            if(!targetPath.startsWith(pdfsDirPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
 
             boolean deleted = Files.deleteIfExists(targetPath);
-
             if(deleted){
                 return ResponseEntity.ok(Map.of("message", "PDF " + filename + " foi deletado"));
             }else{
@@ -102,17 +108,19 @@ public class PdfController{
         }
     }
 
-    @PutMapping("pdfs/{filename:.+}")
+    @PutMapping("/pdfs/{filename:.+}")
     public ResponseEntity<?> renamePdf(@PathVariable String filename, @RequestBody Map<String,String> body) {
         try{
             String newName = body.get("newName");
-
             if(!newName.toLowerCase().endsWith(".pdf")){
                 newName += ".pdf";
             }
 
             Path sourcePath = pdfsDirPath.resolve(filename).normalize();
             Path targetPath = pdfsDirPath.resolve(newName).normalize();
+            if(!sourcePath.startsWith(pdfsDirPath) || !targetPath.startsWith(pdfsDirPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
 
             Files.move(sourcePath, targetPath);
 
