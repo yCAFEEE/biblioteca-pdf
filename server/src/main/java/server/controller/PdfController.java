@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.PostConstruct;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,10 +53,18 @@ public class PdfController{
                 for(File file : files){
                     String name = file.getName();
                     String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+                    int pagesCount = 0;
+
+                    try(PDDocument fileDocument = Loader.loadPDF(file);){
+                        pagesCount = fileDocument.getNumberOfPages();
+                    }catch(Exception e){
+                        System.err.println("Erro ao ler a quantidade de paginas do arquivo: " + name);
+                    }
 
                     Map<String, String> pdfInfo = new HashMap<>();
                     pdfInfo.put("name", name);
                     pdfInfo.put("url", "/pdfs-files/" + encodedName);
+                    pdfInfo.put("pages", String.valueOf(pagesCount));
 
                     list.add(pdfInfo);
                 }
@@ -77,9 +87,14 @@ public class PdfController{
             String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
     
             Files.copy(file.getInputStream(), pdfsDirPath.resolve(name), StandardCopyOption.REPLACE_EXISTING);
+            int pagesCount = 0;
+            try(PDDocument fileDocument = Loader.loadPDF(pdfsDirPath.resolve(name).toFile())){
+                pagesCount = fileDocument.getNumberOfPages();
+            }
             Map<String, String> fileInfo = new HashMap<>();
             fileInfo.put("name", name);
             fileInfo.put("url", "/pdfs-files/" + encodedName);
+            fileInfo.put("pages", String.valueOf(pagesCount));
 
             return ResponseEntity.ok(fileInfo);
         }catch(Exception e){

@@ -75,6 +75,7 @@ export default function Home(){
                                 </div>
                                 <img src="../../pdf-placeholder.png" />
                                 <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
+                                <p>{pdf.pages} págs.</p>
                             </li>
                         ))}
                     </ul>
