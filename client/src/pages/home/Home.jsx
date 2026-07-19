@@ -95,8 +95,10 @@ export default function Home(){
                                     <button onClick={() => handleFileDelete(pdf.name)}>deletar</button>
                                 </div>
                                 <img src="../../pdf-placeholder.png" />
-                                <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
-                                <p>{pdf.pages} págs.</p>
+                                <div className="pdf-info">
+                                    <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
+                                    <p>{pdf.pages} págs.</p>
+                                </div>
                             </li>
                         ))}
                     </ul>
