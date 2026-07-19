@@ -59,7 +59,6 @@ export default function Home(){
         <main>
             <div className="content-container">
                 <h1>PDFs</h1>
-                <input type="file" accept=".pdf" onChange={handleFileUpload} id="upload-button"/>
                 {pdfs.length === 0 ? (
                     <div className="error-container">
                         <h2>Erro</h2>
@@ -70,15 +69,18 @@ export default function Home(){
                     <ul>
                         {pdfs.map((pdf, idx) => (
                             <li className="pdf-box" key={idx}>
+                                <div className="pdf-buttons">
+                                    <button onClick={() => renameFile(pdf.name)}>renomear</button>
+                                    <button onClick={() => handleFileDelete(pdf.name)}>deletar</button>
+                                </div>
                                 <img src="../../pdf-placeholder.png" />
                                 <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
-                                <button onClick={() => renameFile(pdf.name)}>renomear</button>
-                                <button onClick={() => handleFileDelete(pdf.name)}>deletar</button>
                             </li>
                         ))}
                     </ul>
                 </div>
                 )}
+                <input type="file" accept=".pdf" onChange={handleFileUpload} id="upload-button"/>
             </div>
         </main>
     );
