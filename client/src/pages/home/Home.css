@@ -40,3 +40,8 @@
 .pdf-box a:hover{
     text-decoration: underline;
 }
+
+.upload-file-form form{
+    display: flex;
+    flex-direction: column;
+}

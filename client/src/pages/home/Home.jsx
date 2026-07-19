@@ -18,7 +18,8 @@ export default function Home(){
     }, []);
 
     const handleFileUpload = (event) => {
-        const arquivoSelecionado = event.target.files[0];
+        event.preventDefault();
+        const arquivoSelecionado = document.getElementById("upload-file").files[0];
 
         if(!arquivoSelecionado) return;
 
@@ -30,7 +31,7 @@ export default function Home(){
             body: formData
         })
         .then(r => r.json())
-        .then(data => buscarPdfs())
+        .then(data => buscarPdfs(), document.getElementById("upload-file").value = "")
         .catch(err => console.error("Falha ao enviar arquivo ", err));
     };
 
@@ -101,7 +102,13 @@ export default function Home(){
                     </ul>
                 </div>
                 )}
-                <input type="file" accept=".pdf" onChange={handleFileUpload} id="upload-button"/>
+                <div className="upload-file-form">
+                    <h2>Enviar arquivo com extensão .pdf</h2>
+                    <form onSubmit={handleFileUpload}>
+                        <input type="file" accept=".pdf" id="upload-file"/>
+                        <button type="submit">Enviar</button>
+                    </form>
+                </div>
             </div>
         </main>
     );
