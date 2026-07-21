@@ -2,6 +2,7 @@
 
 :root{
     --white: rgb(255, 255, 255);
+    --off-white: rgb(240, 240, 240);
     --light-gray: rgb(220, 220, 220);
     --black: rgb(0, 0, 0);
     --royal-blue: rgb(80, 100, 255);
