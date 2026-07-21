@@ -44,6 +44,23 @@
     text-decoration: underline;
 }
 
+.pdf-buttons button{
+    background-color: var(--off-white);
+    padding: 5px;
+    border-radius: 3px;
+    border: solid 2px var(--light-gray);
+    margin-right: 5px;
+    transition: 0.2s;
+}
+
+.pdf-buttons #renomear-button:hover{
+    border-color: var(--royal-blue);
+}
+
+.pdf-buttons #deletar-button:hover{
+    border-color: var(--coral-red);
+}
+
 .pdf-info{
     margin-top: auto;
 }

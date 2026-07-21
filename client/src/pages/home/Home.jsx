@@ -91,8 +91,8 @@ export default function Home(){
                         {pdfsOrdenados.map((pdf, idx) => (
                             <li className="pdf-box" key={idx}>
                                 <div className="pdf-buttons">
-                                    <button onClick={() => renameFile(pdf.name)}>renomear</button>
-                                    <button onClick={() => handleFileDelete(pdf.name)}>deletar</button>
+                                    <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
+                                    <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
                                 </div>
                                 <img src="../../pdf-placeholder.png" />
                                 <div className="pdf-info">
