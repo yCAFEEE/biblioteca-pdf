@@ -21,6 +21,10 @@ body{
     font-size: 15px;
 }
 
+#root{
+    min-height: 100vh;
+}
+
 button, select, input{
     cursor: pointer;
 }
