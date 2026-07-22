@@ -70,48 +70,53 @@ export default function Home(){
 
     const pdfsOrdenados = sortPdfs();
     return(
-        <main>
-            <div className="content-container">
-                <h1>PDFs</h1>
-                {pdfs.length === 0 ? (
-                    <div className="error-container">
-                        <h2>Erro</h2>
-                        <p>Erro no servidor ou nenhum arquivo PDF encontrado no caminho: ./client/public/pdfDir/</p>
-                    </div>
-                ) : (
-                <div className="pdfs-container">
-                    <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
-                        <option value="az">Ordem alfabética A-Z</option>
-                        <option value="za">Ordem alfabética Z-A</option>
-                        <option value="pag-cres">Ordem crescente de páginas</option>
-                        <option value="pag-decres">Ordem decrescente de páginas</option>
-                    </select>
+        <>
+            <main>
+                <div className="content-container">
+                    <h1>PDFs</h1>
+                    {pdfs.length === 0 ? (
+                        <div className="error-container">
+                            <h2>Erro</h2>
+                            <p>Erro no servidor ou nenhum arquivo PDF encontrado no caminho: ./client/public/pdfDir/</p>
+                        </div>
+                    ) : (
+                    <div className="pdfs-container">
+                        <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
+                            <option value="az">Ordem alfabética A-Z</option>
+                            <option value="za">Ordem alfabética Z-A</option>
+                            <option value="pag-cres">Ordem crescente de páginas</option>
+                            <option value="pag-decres">Ordem decrescente de páginas</option>
+                        </select>
 
-                    <ul>
-                        {pdfsOrdenados.map((pdf, idx) => (
-                            <li className="pdf-box" key={idx}>
-                                <div className="pdf-buttons">
-                                    <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
-                                    <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
-                                </div>
-                                <img src="../../pdf-placeholder.png" />
-                                <div className="pdf-info">
-                                    <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
-                                    <p>{pdf.pages} págs.</p>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                        <ul>
+                            {pdfsOrdenados.map((pdf, idx) => (
+                                <li className="pdf-box" key={idx}>
+                                    <div className="pdf-buttons">
+                                        <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
+                                        <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
+                                    </div>
+                                    <img src="../../pdf-placeholder.png" />
+                                    <div className="pdf-info">
+                                        <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
+                                        <p>{pdf.pages} págs.</p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    )}
+                    <div className="upload-file-form">
+                        <h2>Enviar arquivo com extensão .pdf</h2>
+                        <form onSubmit={handleFileUpload}>
+                            <input type="file" accept=".pdf" id="upload-file"/>
+                            <button type="submit">Enviar</button>
+                        </form>
+                    </div>
                 </div>
-                )}
-                <div className="upload-file-form">
-                    <h2>Enviar arquivo com extensão .pdf</h2>
-                    <form onSubmit={handleFileUpload}>
-                        <input type="file" accept=".pdf" id="upload-file"/>
-                        <button type="submit">Enviar</button>
-                    </form>
-                </div>
-            </div>
-        </main>
+            </main>
+            <footer>
+                <p>Desenvolvido por <a href="https://github.com/yCAFEEE/">yCAFEEE</a> (Yuri Daniel).</p>
+            </footer>
+        </>
     );
 }

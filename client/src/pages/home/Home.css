@@ -92,6 +92,10 @@
     border: solid 2px rgb(50, 200, 80);
 }
 
+footer a{
+    color: var(--blue);
+}
+
 @media (max-width: 768px){
     .pdfs-container ul{
         grid-template-columns: 1fr 1fr;
