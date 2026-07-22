@@ -52,7 +52,7 @@
     text-decoration: underline;
 }
 
-.pdf-buttons button, .upload-file-form button{
+.pdf-buttons button, .upload-file-form input[type="file"]::file-selector-button, .upload-file-form button{
     background-color: var(--off-white);
     padding: 5px;
     border-radius: 3px;
@@ -80,12 +80,11 @@
 }
 
 .upload-file-form input[type="file"]::file-selector-button{
-    background-color: var(--off-white);
-    padding: 5px;
-    border-radius: 3px;
-    border: solid 2px var(--light-gray);
-    margin-right: 5px;
     cursor: pointer;
+}
+
+.upload-file-form button{
+    margin: 0;
 }
 
 .upload-file-form button:hover{
