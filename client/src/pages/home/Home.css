@@ -89,7 +89,7 @@
 }
 
 .upload-file-form button:hover{
-    border: solid 2px rgb(50, 200, 80);
+    border: solid 2px var(--lime-green);
 }
 
 footer a{
