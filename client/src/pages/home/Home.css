@@ -11,6 +11,13 @@
     align-items: flex-start;
 }
 
+.pdfs-container select{
+    margin: 0 10px;
+    padding: 5px;
+    border: solid 2px var(--light-gray);
+    border-radius: 3px;
+}
+
 .pdfs-container ul{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -44,7 +51,7 @@
     text-decoration: underline;
 }
 
-.pdf-buttons button{
+.pdf-buttons button, .upload-file-form button{
     background-color: var(--off-white);
     padding: 5px;
     border-radius: 3px;
@@ -68,6 +75,20 @@
 .upload-file-form form{
     display: flex;
     flex-direction: column;
+    gap: 5px;
+}
+
+.upload-file-form input[type="file"]::file-selector-button{
+    background-color: var(--off-white);
+    padding: 5px;
+    border-radius: 3px;
+    border: solid 2px var(--light-gray);
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.upload-file-form button:hover{
+    border: solid 2px rgb(50, 200, 80);
 }
 
 @media (max-width: 768px){
