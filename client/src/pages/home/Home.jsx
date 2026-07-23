@@ -73,7 +73,7 @@ export default function Home(){
         <>
             <main>
                 <div className="content-container">
-                    <h1>PDFs</h1>
+                    <h1>Biblioteca PDF</h1>
                     {pdfs.length === 0 ? (
                         <div className="error-container">
                             <h2>Erro</h2>
