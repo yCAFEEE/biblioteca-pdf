@@ -100,7 +100,7 @@ export default function Home(){
                                             <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
                                             <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
                                         </div>
-                                        <img src="../../pdf-placeholder.png" />
+                                        <img src={pdf.thumbnail ? pdf.thumbnail : "../../pdf-placeholder.png"} alt={`Capa de ${pdf.name}`} onError={(e) => {e.target.src = "../../pdf-placeholder.png"}} />
                                         <div className="pdf-info">
                                             <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
                                             <p>{pdf.pages} págs.</p>

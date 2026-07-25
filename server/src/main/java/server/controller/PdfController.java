@@ -1,5 +1,7 @@
 package server.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -8,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +19,9 @@ import jakarta.annotation.PostConstruct;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,6 +71,7 @@ public class PdfController{
                     pdfInfo.put("name", name);
                     pdfInfo.put("url", "/pdfs-files/" + encodedName);
                     pdfInfo.put("pages", String.valueOf(pagesCount));
+                    pdfInfo.put("thumbnail", "http://localhost:8080/pdfs/" + encodedName + "/cover");
 
                     list.add(pdfInfo);
                 }
@@ -76,6 +83,34 @@ public class PdfController{
         }
     }
     
+    @GetMapping(value = "/pdfs/{filename:.+}/cover", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> getPdfCover(@PathVariable String filename){
+        try{
+            Path targetPath = pdfsDirPath.resolve(filename).normalize();
+
+            if(!targetPath.startsWith(pdfsDirPath) || !Files.exists(targetPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
+
+            try(PDDocument document = Loader.loadPDF(targetPath.toFile())){
+                if(document.getNumberOfPages() > 0){
+                    PDFRenderer pdfRenderer = new PDFRenderer(document);
+                    BufferedImage img = pdfRenderer.renderImageWithDPI(0, 90);
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ImageIO.write(img, "PNG", baos);
+
+                    return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(baos.toByteArray());
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Arquivo não encontrado"));
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao criar capa do arquivo"));
+        }
+    }
+    
+
     @PostMapping("/pdfs")
     public ResponseEntity<?> uploadPdf(@RequestParam MultipartFile file){
         try{

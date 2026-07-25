@@ -86,10 +86,6 @@ main{
     border-color: var(--coral-red);
 }
 
-.pdf-info{
-    margin-top: auto;
-}
-
 .upload-file-form form{
     display: flex;
     flex-direction: column;
