@@ -15,8 +15,17 @@ main{
     width: 100%;
 }
 
+.filter-container select{
+    padding: 5px;
+    border: solid 2px var(--light-gray);
+    border-radius: 3px;
+}
+
 .filter-container input{
     cursor: text;
+    padding: 5px;
+    border: solid 2px var(--light-gray);
+    border-radius: 3px;
 }
 
 .pdfs-container{
@@ -25,12 +34,6 @@ main{
     justify-content: center;
     align-items: flex-start;
     gap: 10px;
-}
-
-.pdfs-container select{
-    padding: 5px;
-    border: solid 2px var(--light-gray);
-    border-radius: 3px;
 }
 
 .pdfs-container ul{
