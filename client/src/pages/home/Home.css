@@ -9,6 +9,16 @@ main{
     gap: 10px;
 }
 
+.filter-container{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.filter-container input{
+    cursor: text;
+}
+
 .pdfs-container{
     display: flex;
     flex-direction: column;

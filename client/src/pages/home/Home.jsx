@@ -4,7 +4,8 @@ import "./Home.css"
 
 export default function Home(){
     const [pdfs, setPdfs] = useState([]);
-    const [ordenacao, setOrdenacao] = useState("az")
+    const [ordenacao, setOrdenacao] = useState("az");
+    const [busca, setBusca] = useState("");
 
     const buscarPdfs = () => {
         fetch("http://localhost:8080/pdfs")
@@ -57,18 +58,16 @@ export default function Home(){
         .catch(err => console.error("Erro ao renomear arquivo"));
     };
 
-    const sortPdfs = () => {
-        const copiaPdfs = [...pdfs]
+    const sortedPdfs = pdfs.filter((pdf) => pdf.name.toLowerCase().includes(busca.toLowerCase())).sort((a, b) => {
         switch(ordenacao){
-            case "az": return copiaPdfs.sort((a, b) => a.name.localeCompare(b.name));
-            case "za": return copiaPdfs.sort((a, b) => b.name.localeCompare(a.name));
-            case "pag-cres": return copiaPdfs.sort((a, b) => a.pages - b.pages);
-            case "pag-decres": return copiaPdfs.sort((a, b) => b.pages - a.pages);
-            default: return copiaPdfs;
+            case "az": return a.name.localeCompare(b.name);
+            case "za": return b.name.localeCompare(a.name);
+            case "pag-cres": return Number(a.pages) - Number(b.pages);
+            case "pag-decres": return Number(b.pages) - Number(a.pages);
+            default: return 0;
         }
-    }
+    });
 
-    const pdfsOrdenados = sortPdfs();
     return(
         <>
             <main>
@@ -81,28 +80,35 @@ export default function Home(){
                         </div>
                     ) : (
                     <div className="pdfs-container">
-                        <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
-                            <option value="az">Ordem alfabética A-Z</option>
-                            <option value="za">Ordem alfabética Z-A</option>
-                            <option value="pag-cres">Ordem crescente de páginas</option>
-                            <option value="pag-decres">Ordem decrescente de páginas</option>
-                        </select>
+                        <div className="filter-container">
+                            <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
+                                <option value="az">Ordem alfabética A-Z</option>
+                                <option value="za">Ordem alfabética Z-A</option>
+                                <option value="pag-cres">Ordem crescente de páginas</option>
+                                <option value="pag-decres">Ordem decrescente de páginas</option>
+                            </select>
+                            <input type="search" placeholder="Buscar arquivo..." value={busca} onChange={(e) => setBusca(e.target.value)}/>
+                        </div>
 
-                        <ul>
-                            {pdfsOrdenados.map((pdf, idx) => (
-                                <li className="pdf-box" key={idx}>
-                                    <div className="pdf-buttons">
-                                        <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
-                                        <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
-                                    </div>
-                                    <img src="../../pdf-placeholder.png" />
-                                    <div className="pdf-info">
-                                        <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
-                                        <p>{pdf.pages} págs.</p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                        {sortedPdfs.length === 0 ? (
+                            <p>Nenhum arquivo encontrado com o nome "{busca}"</p>
+                        ) : (
+                            <ul>
+                                {sortedPdfs.map((pdf, idx) => (
+                                    <li className="pdf-box" key={idx}>
+                                        <div className="pdf-buttons">
+                                            <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
+                                            <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
+                                        </div>
+                                        <img src="../../pdf-placeholder.png" />
+                                        <div className="pdf-info">
+                                            <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
+                                            <p>{pdf.pages} págs.</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
                     )}
                     <div className="upload-file-form">
