@@ -4,6 +4,7 @@ import "./Home.css"
 
 export default function Home(){
     const [pdfs, setPdfs] = useState([]);
+    const [folders, setFolders] = useState([]);
     const [ordenacao, setOrdenacao] = useState("az");
     const [busca, setBusca] = useState("");
 
@@ -68,6 +69,17 @@ export default function Home(){
         }
     });
 
+    const buscarPastas = () => {
+        fetch("http://localhost:8080/folders")
+        .then(r => r.json())
+        .then(setFolders)
+        .catch(err => console.error("Erro ao buscar pastas", err));
+    };
+
+    useEffect(() => {
+        buscarPastas();
+    }, []);
+
     return(
         <>
             <main>
@@ -111,6 +123,21 @@ export default function Home(){
                         )}
                     </div>
                     )}
+
+                    {/* Isso é provisório. A ideia é posteriormente deixar pastas e arquivos no mesmo container */}
+                    <div className="pdfs-container"> 
+                        <ul>
+                            {folders.map((folder, idx) => (
+                                <li className="pdf-box" key={idx}>
+                                    <div className="pdf-info">
+                                        <p>{folder.name}</p>
+                                        <small>Arquivos: {folder.files}</small>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
                     <div className="upload-file-form">
                         <h2>Enviar arquivo com extensão .pdf</h2>
                         <form onSubmit={handleFileUpload}>
