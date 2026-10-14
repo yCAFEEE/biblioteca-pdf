@@ -104,10 +104,6 @@ main{
     border: solid 2px var(--lime-green);
 }
 
-footer a{
-    color: var(--blue);
-}
-
 @media (max-width: 768px){
     .pdfs-container ul{
         grid-template-columns: 1fr 1fr;

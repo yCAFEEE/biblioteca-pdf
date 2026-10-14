@@ -120,9 +120,6 @@ export default function Home(){
                     </div>
                 </div>
             </main>
-            <footer>
-                <p>Desenvolvido por <a href="https://github.com/yCAFEEE/">yCAFEEE</a> (Yuri Daniel).</p>
-            </footer>
         </>
     );
 }
