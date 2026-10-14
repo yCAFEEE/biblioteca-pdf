@@ -7,7 +7,9 @@ import java.util.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,6 +62,30 @@ public class FolderController{
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao criar pasta"));
+        }
+    }
+
+    @DeleteMapping("/folders/{foldername:.+}")
+    public ResponseEntity<?> deleteFolder(@PathVariable String foldername){
+        try{
+            Path targetPath = pdfsDirPath.resolve(foldername).normalize();
+            if(!targetPath.startsWith(pdfsDirPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
+
+            if(targetPath.toFile().list((dir, folder) -> folder.toLowerCase().endsWith(".pdf")).length > 0){
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "A pasta " + foldername + " não está vazia"));
+            }
+
+            boolean deleted = Files.deleteIfExists(targetPath);
+            if(deleted){
+                return ResponseEntity.ok(Map.of("ok", "A pasta " + foldername + " foi deletado"));
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Pasta não foi encontrada"));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao deletar pasta"));
         }
     }
 }
