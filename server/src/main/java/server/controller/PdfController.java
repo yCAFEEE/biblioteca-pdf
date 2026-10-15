@@ -69,7 +69,7 @@ public class PdfController{
 
                     Map<String, String> pdfInfo = new HashMap<>();
                     pdfInfo.put("name", name);
-                    pdfInfo.put("url", "/pdfs-files/" + encodedName);
+                    pdfInfo.put("url", "pdfs-files/" + encodedName);
                     pdfInfo.put("pages", String.valueOf(pagesCount));
                     pdfInfo.put("thumbnail", "http://localhost:8080/pdfs/" + encodedName + "/cover");
 
@@ -128,7 +128,7 @@ public class PdfController{
             }
             Map<String, String> fileInfo = new HashMap<>();
             fileInfo.put("name", name);
-            fileInfo.put("url", "/pdfs-files/" + encodedName);
+            fileInfo.put("url", "pdfs-files/" + encodedName);
             fileInfo.put("pages", String.valueOf(pagesCount));
 
             return ResponseEntity.ok(fileInfo);
