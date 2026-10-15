@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Home.css"
 
+const API = "http://localhost:8080/";
 
 export default function Home(){
     const [pdfs, setPdfs] = useState([]);
@@ -9,7 +10,7 @@ export default function Home(){
     const [busca, setBusca] = useState("");
 
     const buscarPdfs = () => {
-        fetch("http://localhost:8080/pdfs")
+        fetch(`${API}pdfs`)
         .then(r => r.json())
         .then(setPdfs)
         .catch(err => console.error("Falha ao buscar PDFs", err));
@@ -28,7 +29,7 @@ export default function Home(){
         const formData = new FormData();
         formData.append("file", arquivoSelecionado);
 
-        fetch("http://localhost:8080/pdfs", {
+        fetch(`${API}pdfs`, {
             method: "POST",
             body: formData
         })
@@ -38,7 +39,7 @@ export default function Home(){
     };
 
     const handleFileDelete = (nomeArquivo) => {
-        fetch(`http://localhost:8080/pdfs/${nomeArquivo}`, {
+        fetch(`${API}pdfs/${nomeArquivo}`, {
             method: "DELETE"
         })
         .then(r => r.json())
@@ -49,7 +50,7 @@ export default function Home(){
     const renameFile = (nomeAntigo) => {
         let novoNome = prompt(`Digite o novo nome para ${nomeAntigo}: `);
 
-        fetch(`http://localhost:8080/pdfs/${nomeAntigo}`, {
+        fetch(`${API}pdfs/${nomeAntigo}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ newName: novoNome })
@@ -114,7 +115,7 @@ export default function Home(){
                                         </div>
                                         <img src={pdf.thumbnail ? pdf.thumbnail : "../../pdf-placeholder.png"} alt={`Capa de ${pdf.name}`} onError={(e) => {e.target.src = "../../pdf-placeholder.png"}} />
                                         <div className="pdf-info">
-                                            <a href={`http://localhost:8080${pdf.url}`}>{pdf.name}</a>
+                                            <a href={`${API}${pdf.url}`}>{pdf.name}</a>
                                             <p>{pdf.pages} págs.</p>
                                         </div>
                                     </li>
