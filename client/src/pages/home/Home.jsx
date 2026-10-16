@@ -71,7 +71,7 @@ export default function Home(){
     });
 
     const buscarPastas = () => {
-        fetch("http://localhost:8080/folders")
+        fetch(`${API}folders`)
         .then(r => r.json())
         .then(setFolders)
         .catch(err => console.error("Erro ao buscar pastas", err));
@@ -80,6 +80,32 @@ export default function Home(){
     useEffect(() => {
         buscarPastas();
     }, []);
+
+    const handleDirUpload = (event) => {
+        event.preventDefault();
+
+        let nomePasta = document.getElementById("create-dir").value;
+
+        let formData = new FormData();
+        formData.append("name", nomePasta);
+
+        fetch(`${API}folders`, {
+            method: "POST",
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => buscarPastas())
+        .catch(err => console.error("Erro ao criar pasta"));
+    }
+
+    const handleDirDelete = (nomePasta) => {
+        fetch(`${API}folders/${nomePasta}`, {
+            method: "DELETE"
+        })
+        .then(r => r.json())
+        .then(data => buscarPastas())
+        .catch(err => console.error("Erro ao deletar pasta", err));
+    }
 
     return(
         <>
@@ -126,10 +152,17 @@ export default function Home(){
                     )}
 
                     {/* Isso é provisório. A ideia é posteriormente deixar pastas e arquivos no mesmo container */}
-                    <div className="pdfs-container"> 
+                    <div className="pdfs-container">
+                        <form onSubmit={handleDirUpload}>
+                            <input type="text" id="create-dir" placeholder="Nome da pasta..."/>
+                            <button type="submit">Criar</button>
+                        </form>
                         <ul>
                             {folders.map((folder, idx) => (
                                 <li className="pdf-box" key={idx}>
+                                    <div className="pdf-buttons">
+                                        <button onClick={() => handleDirDelete(folder.name)} id="deletar-button">Deletar</button>
+                                    </div>
                                     <div className="pdf-info">
                                         <p>{folder.name}</p>
                                         <small>Arquivos: {folder.files}</small>
