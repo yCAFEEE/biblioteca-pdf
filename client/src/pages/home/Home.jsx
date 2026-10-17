@@ -107,6 +107,19 @@ export default function Home(){
         .catch(err => console.error("Erro ao deletar pasta", err));
     }
 
+    const renameFolder = (nomeAntigo) => {
+        let novoNome = prompt(`Digite o novo nome para ${nomeAntigo}`);
+
+        fetch(`${API}folders/${nomeAntigo}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ newName: novoNome })
+        })
+        .then(r => r.json())
+        .then(data => buscarPastas())
+        .catch(err => console.error("Erro ao renomear pasta", err))
+    }
+
     return(
         <>
             <main>
@@ -164,7 +177,7 @@ export default function Home(){
                         {folders.length == 0 ? (
                             <div className="error-container">
                                 <h2>Erro</h2>
-                                <p>Erro no servidor ou nenhuma pasta encontrada.</p>
+                                <p>Nenhuma pasta foi encontrada.</p>
                                 <p>Você pode criar uma nova pasta digitando um nome e clicando no botão "Criar".</p>
                             </div>
                         ) : (
@@ -173,6 +186,7 @@ export default function Home(){
                                 {folders.map((folder, idx) => (
                                     <li className="folder-box" key={idx}>
                                         <div className="folder-buttons">
+                                            <button onClick={() => renameFolder(folder.name)} id="renomear-button">Renomear</button>
                                             <button onClick={() => handleDirDelete(folder.name)} id="deletar-button">Deletar</button>
                                         </div>
                                         <div className="folder-info">
