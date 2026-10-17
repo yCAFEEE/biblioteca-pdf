@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer{
 
-    @Value("${frontend.url:https://localhost:5173}")
+    @Value("${frontend.url:http://localhost:5173}")
     private String frontendUrl;
 
     @Override
@@ -25,6 +25,6 @@ public class WebConfig implements WebMvcConfigurer{
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
         String localPath = Paths.get("..", "client", "public", "pdfDir").toAbsolutePath().normalize().toUri().toString();
-        registry.addResourceHandler("/pdfs-files/**").addResourceLocations(localPath);
+        registry.addResourceHandler("pdfs/**").addResourceLocations(localPath);
     }
 }

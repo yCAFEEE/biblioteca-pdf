@@ -34,7 +34,7 @@ export default function Home(){
             body: formData
         })
         .then(r => r.json())
-        .then(data => buscarPdfs(), document.getElementById("upload-file").value = "")
+        .then(data => buscarPdfs(), buscarPastas(), document.getElementById("upload-file").value = "")
         .catch(err => console.error("Falha ao enviar arquivo ", err));
     };
 
@@ -190,7 +190,7 @@ export default function Home(){
                                             <button onClick={() => handleDirDelete(folder.name)} id="deletar-button">Deletar</button>
                                         </div>
                                         <div className="folder-info">
-                                            <p>{folder.name}</p>
+                                            <p><a href={`${encodeURIComponent(folder.name)}`}>{folder.name}</a></p>
                                             <small>Arquivos: {folder.files}</small>
                                         </div>
                                     </li>

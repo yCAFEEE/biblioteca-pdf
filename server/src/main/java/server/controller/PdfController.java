@@ -20,6 +20,8 @@ import jakarta.annotation.PostConstruct;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +71,7 @@ public class PdfController{
 
                     Map<String, String> pdfInfo = new HashMap<>();
                     pdfInfo.put("name", name);
-                    pdfInfo.put("url", "pdfs-files/" + encodedName);
+                    pdfInfo.put("url", "pdfs/" + encodedName);
                     pdfInfo.put("pages", String.valueOf(pagesCount));
                     pdfInfo.put("thumbnail", "http://localhost:8080/pdfs/" + encodedName + "/cover");
 
@@ -110,6 +112,24 @@ public class PdfController{
         }
     }
     
+    @GetMapping(value = "/pdfs/{filename:.+}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<Resource> getPdfFile(@PathVariable String filename){
+        try{
+            Path basePath = pdfsDirPath.toAbsolutePath().normalize();
+            Path targetPath = basePath.resolve(filename).normalize();
+
+            if(!targetPath.startsWith(basePath) || !Files.exists(targetPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            Resource resource = new FileSystemResource(targetPath);
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(resource);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @PostMapping("/pdfs")
     public ResponseEntity<?> uploadPdf(@RequestParam MultipartFile file){
@@ -128,7 +148,7 @@ public class PdfController{
             }
             Map<String, String> fileInfo = new HashMap<>();
             fileInfo.put("name", name);
-            fileInfo.put("url", "pdfs-files/" + encodedName);
+            fileInfo.put("url", "pdfs/" + encodedName);
             fileInfo.put("pages", String.valueOf(pagesCount));
 
             return ResponseEntity.ok(fileInfo);
@@ -178,6 +198,42 @@ public class PdfController{
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao renomear arquivo"));
+        }
+    }
+
+    // Métodos para arquivos dentro de pastas
+    @GetMapping("/folders/{folderName:.+}/pdfs")
+    public ResponseEntity<?> listFolderPdfs(@PathVariable String folderName){
+        try{
+            File folder = new File(pdfsDir + "/" + folderName);
+            File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
+            List<Map<String, String>> list = new ArrayList<>();
+
+            if(files != null){
+                for(File file : files){
+                    String name = file.getName();
+                    String encodedFolder = URLEncoder.encode(folderName, StandardCharsets.UTF_8).replace("+", "%20");
+                    String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+                    int pagesCount = 0;
+
+                    try(PDDocument fileDocument = Loader.loadPDF(file)){
+                        pagesCount = fileDocument.getNumberOfPages();
+                    }catch(Exception e){
+                        System.err.println("Erro ao ler a quantidade de páginas do arquivo: " + name);
+                    }
+
+                    Map<String, String> fileInfo = new HashMap<>();
+                    fileInfo.put("name", name);
+                    fileInfo.put("pages", String.valueOf(pagesCount));
+                    fileInfo.put("url", "folders/" + encodedFolder + "/pdfs/" + encodedName);
+                    fileInfo.put("thumbnail", "http://localhost:8080/folders/" + encodedFolder + "/pdfs/" + encodedName + "/cover");
+                    list.add(fileInfo);
+                }
+            }
+            return ResponseEntity.ok(list);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao listar PDFs dentro da pasta"));
         }
     }
 }
