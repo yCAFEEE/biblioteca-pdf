@@ -21,14 +21,14 @@ main{
     border-radius: 3px;
 }
 
-.filter-container input{
+input[type="search"], input[type="text"]{
     cursor: text;
     padding: 5px;
     border: solid 2px var(--light-gray);
     border-radius: 3px;
 }
 
-.pdfs-container{
+.pdfs-container, .folders-container{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -36,14 +36,14 @@ main{
     gap: 10px;
 }
 
-.pdfs-container ul{
+.pdfs-container ul, .folders-container ul{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     list-style-type: none;
     gap: 10px;
 }
 
-.pdf-box{
+.pdf-box, .folder-box{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -69,7 +69,7 @@ main{
     text-decoration: underline;
 }
 
-.pdf-buttons button, .upload-file-form input[type="file"]::file-selector-button, .upload-file-form button{
+.pdf-buttons button, .folder-buttons button, .upload-file-form input[type="file"]::file-selector-button, .upload-file-form button, .create-dir-form button{
     background-color: var(--off-white);
     padding: 5px;
     border-radius: 3px;
@@ -78,15 +78,15 @@ main{
     transition: 0.2s;
 }
 
-.pdf-buttons #renomear-button:hover{
+#renomear-button:hover{
     border-color: var(--royal-blue);
 }
 
-.pdf-buttons #deletar-button:hover{
+#deletar-button:hover{
     border-color: var(--coral-red);
 }
 
-.upload-file-form form{
+.create-dir-form form, .upload-file-form form{
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -100,7 +100,7 @@ main{
     margin: 0;
 }
 
-.upload-file-form button:hover{
+.create-dir-form button:hover, .upload-file-form button:hover{
     border: solid 2px var(--lime-green);
 }
 

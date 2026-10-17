@@ -152,24 +152,38 @@ export default function Home(){
                     )}
 
                     {/* Isso é provisório. A ideia é posteriormente deixar pastas e arquivos no mesmo container */}
-                    <div className="pdfs-container">
-                        <form onSubmit={handleDirUpload}>
-                            <input type="text" id="create-dir" placeholder="Nome da pasta..."/>
-                            <button type="submit">Criar</button>
-                        </form>
-                        <ul>
-                            {folders.map((folder, idx) => (
-                                <li className="pdf-box" key={idx}>
-                                    <div className="pdf-buttons">
-                                        <button onClick={() => handleDirDelete(folder.name)} id="deletar-button">Deletar</button>
-                                    </div>
-                                    <div className="pdf-info">
-                                        <p>{folder.name}</p>
-                                        <small>Arquivos: {folder.files}</small>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="folders-container">
+                        <h1>Pastas</h1>
+                        <div className="create-dir-form">
+                            <form onSubmit={handleDirUpload}>
+                                <label>Criar nova pasta</label>
+                                <input type="text" id="create-dir" placeholder="Nome da pasta..."/>
+                                <button type="submit">Criar</button>
+                            </form>
+                        </div>
+                        {folders.length == 0 ? (
+                            <div className="error-container">
+                                <h2>Erro</h2>
+                                <p>Erro no servidor ou nenhuma pasta encontrada.</p>
+                                <p>Você pode criar uma nova pasta digitando um nome e clicando no botão "Criar".</p>
+                            </div>
+                        ) : (
+                        <div className="folders-content">
+                            <ul>
+                                {folders.map((folder, idx) => (
+                                    <li className="folder-box" key={idx}>
+                                        <div className="folder-buttons">
+                                            <button onClick={() => handleDirDelete(folder.name)} id="deletar-button">Deletar</button>
+                                        </div>
+                                        <div className="folder-info">
+                                            <p>{folder.name}</p>
+                                            <small>Arquivos: {folder.files}</small>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        )}
                     </div>
 
                     <div className="upload-file-form">
