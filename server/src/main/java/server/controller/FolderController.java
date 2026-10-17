@@ -49,7 +49,7 @@ public class FolderController{
     @PostMapping("/folders")
     public ResponseEntity<?> createFolder(@RequestParam Map<String, String> body){
         try{
-            String folderName = body.get("name");
+            String folderName = body.get("name").trim();
             Path folderPath = Path.of(pdfsDir + "/" + folderName);
 
             Files.createDirectory(folderPath);
