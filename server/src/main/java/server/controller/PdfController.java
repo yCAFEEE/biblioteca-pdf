@@ -257,6 +257,29 @@ public class PdfController{
         }
     }
 
+    @PutMapping("folders/{foldername:.+}/pdfs/{filename:.+}")
+    public ResponseEntity<?> renamePdf(@PathVariable String foldername, @PathVariable String filename, @RequestBody Map<String, String> body){
+        try{
+            String newName = body.get("newName");
+            if(!newName.toLowerCase().endsWith(".pdf")){
+                newName += ".pdf";
+            }
+
+            Path sourcePath = pdfsDirPath.resolve(foldername + "/" + filename).normalize();
+            Path targetPath = pdfsDirPath.resolve(foldername + "/" + newName).normalize();
+            if(!sourcePath.startsWith(pdfsDirPath) || !targetPath.startsWith(pdfsDirPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
+
+            Files.move(sourcePath, targetPath);
+
+            return ResponseEntity.ok(Map.of("message", "Arquivo renomeado"));
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao renomear arquivo"));
+        }
+    }
+
     @GetMapping(value = "folders/{foldername:.+}/pdfs/{filename:.+}/cover", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<?> getFolderPdfCover(@PathVariable String foldername, @PathVariable String filename){
         try{
