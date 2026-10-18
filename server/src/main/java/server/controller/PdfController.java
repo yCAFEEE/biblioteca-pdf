@@ -237,6 +237,26 @@ public class PdfController{
         }
     }
 
+    @DeleteMapping("folders/{foldername:.+}/pdfs/{filename:.+}")
+    public ResponseEntity<?> deleteFolderPdf(@PathVariable String foldername, @PathVariable String filename){
+        try{
+            Path targetPath = pdfsDirPath.resolve(foldername + "/" + filename).normalize();
+            if(!targetPath.startsWith(pdfsDirPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
+
+            boolean deleted = Files.deleteIfExists(targetPath);
+            if(deleted){
+                return ResponseEntity.ok(Map.of("message", "PDF " + filename + " foi deletado"));
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Arquivo não encontrado"));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao deletar arquivo na pasta " + foldername));
+        }
+    }
+
     @GetMapping(value = "folders/{foldername:.+}/pdfs/{filename:.+}/cover", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<?> getFolderPdfCover(@PathVariable String foldername, @PathVariable String filename){
         try{

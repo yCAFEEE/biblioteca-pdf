@@ -21,6 +21,15 @@ export default function Folder(){
         buscarPdfs();
     }, []);
 
+    const handleFileDelete = (nomeArquivo) => {
+        fetch(`${API}folders/${folderName}/pdfs/${nomeArquivo}`, {
+            method: "DELETE"
+        })
+        .then(r => r.json())
+        .then(data => buscarPdfs())
+        .catch(err => console.error("Erro ao deletar arquivo", err));
+    };
+
     const sortedPdfs = pdfs.filter((pdf) => pdf.name.toLowerCase().includes(busca.toLowerCase())).sort((a, b) => {
         switch(ordenacao){
             case "az": return a.name.localeCompare(b.name);
@@ -63,6 +72,9 @@ export default function Folder(){
                             <ul>
                                 {sortedPdfs.map((pdf, idx) => (
                                     <li className="pdf-box" key={idx}>
+                                        <div className="pdf-buttons">
+                                            <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
+                                        </div>
                                         <img src={pdf.thumbnail ? pdf.thumbnail : "../../pdf-placeholder.png"} alt={`Capa de ${pdf.name}`} onError={(e) => {e.target.src = "../../pdf-placeholder.png"}} />
                                         <div className="pdf-info">
                                             <a href={`${API}${pdf.url}`}>{pdf.name}</a>
