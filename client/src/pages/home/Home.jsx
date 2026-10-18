@@ -5,6 +5,7 @@ const API = "http://localhost:8080/";
 
 export default function Home(){
     const [pdfs, setPdfs] = useState([]);
+    const [folders, setFolders] = useState([]);
     const [ordenacao, setOrdenacao] = useState("az");
     const [busca, setBusca] = useState("");
 
@@ -33,7 +34,7 @@ export default function Home(){
             body: formData
         })
         .then(r => r.json())
-        .then(data => buscarPdfs(), document.getElementById("upload-file").value = "")
+        .then(data => buscarPdfs(), buscarPastas(), document.getElementById("upload-file").value = "")
         .catch(err => console.error("Falha ao enviar arquivo ", err));
     };
 
@@ -68,6 +69,56 @@ export default function Home(){
             default: return 0;
         }
     });
+
+    const buscarPastas = () => {
+        fetch(`${API}folders`)
+        .then(r => r.json())
+        .then(setFolders)
+        .catch(err => console.error("Erro ao buscar pastas", err));
+    };
+
+    useEffect(() => {
+        buscarPastas();
+    }, []);
+
+    const handleDirUpload = (event) => {
+        event.preventDefault();
+
+        let nomePasta = document.getElementById("create-dir").value;
+
+        let formData = new FormData();
+        formData.append("name", nomePasta);
+
+        fetch(`${API}folders`, {
+            method: "POST",
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => buscarPastas())
+        .catch(err => console.error("Erro ao criar pasta"));
+    }
+
+    const handleDirDelete = (nomePasta) => {
+        fetch(`${API}folders/${nomePasta}`, {
+            method: "DELETE"
+        })
+        .then(r => r.json())
+        .then(data => buscarPastas())
+        .catch(err => console.error("Erro ao deletar pasta", err));
+    }
+
+    const renameFolder = (nomeAntigo) => {
+        let novoNome = prompt(`Digite o novo nome para ${nomeAntigo}`);
+
+        fetch(`${API}folders/${nomeAntigo}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ newName: novoNome })
+        })
+        .then(r => r.json())
+        .then(data => buscarPastas())
+        .catch(err => console.error("Erro ao renomear pasta", err))
+    }
 
     return(
         <>
@@ -112,6 +163,43 @@ export default function Home(){
                         )}
                     </div>
                     )}
+
+                    {/* Isso é provisório. A ideia é posteriormente deixar pastas e arquivos no mesmo container */}
+                    <div className="folders-container">
+                        <h1>Pastas</h1>
+                        <div className="create-dir-form">
+                            <form onSubmit={handleDirUpload}>
+                                <label>Criar nova pasta</label>
+                                <input type="text" id="create-dir" placeholder="Nome da pasta..."/>
+                                <button type="submit">Criar</button>
+                            </form>
+                        </div>
+                        {folders.length == 0 ? (
+                            <div className="error-container">
+                                <h2>Erro</h2>
+                                <p>Nenhuma pasta foi encontrada.</p>
+                                <p>Você pode criar uma nova pasta digitando um nome e clicando no botão "Criar".</p>
+                            </div>
+                        ) : (
+                        <div className="folders-content">
+                            <ul>
+                                {folders.map((folder, idx) => (
+                                    <li className="folder-box" key={idx}>
+                                        <div className="folder-buttons">
+                                            <button onClick={() => renameFolder(folder.name)} id="renomear-button">Renomear</button>
+                                            <button onClick={() => handleDirDelete(folder.name)} id="deletar-button">Deletar</button>
+                                        </div>
+                                        <div className="folder-info">
+                                            <p><a href={`${encodeURIComponent(folder.name)}`}>{folder.name}</a></p>
+                                            <small>Arquivos: {folder.files}</small>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        )}
+                    </div>
+
                     <div className="upload-file-form">
                         <h2>Enviar arquivo com extensão .pdf</h2>
                         <form onSubmit={handleFileUpload}>

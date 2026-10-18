@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,7 +51,7 @@ public class FolderController{
     @PostMapping("/folders")
     public ResponseEntity<?> createFolder(@RequestParam Map<String, String> body){
         try{
-            String folderName = body.get("name");
+            String folderName = body.get("name").trim();
             Path folderPath = Path.of(pdfsDir + "/" + folderName);
 
             Files.createDirectory(folderPath);
@@ -86,6 +88,26 @@ public class FolderController{
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao deletar pasta"));
+        }
+    }
+
+    @PutMapping("/folders/{foldername:.+}")
+    public ResponseEntity<?> renameFolder(@PathVariable String foldername, @RequestBody Map<String, String> body){
+        try{
+            String newName = body.get("newName");
+
+            Path sourcePath = pdfsDirPath.resolve(foldername).normalize();
+            Path targetPath = pdfsDirPath.resolve(newName).normalize();
+            if(!sourcePath.startsWith(pdfsDirPath) || !targetPath.startsWith(pdfsDirPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
+
+            Files.move(sourcePath, targetPath);
+
+            return ResponseEntity.ok(Map.of("message", "Pasta renomeada"));
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao renomear pasta"));
         }
     }
 }
