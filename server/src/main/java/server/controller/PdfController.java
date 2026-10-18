@@ -236,4 +236,23 @@ public class PdfController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao listar PDFs dentro da pasta"));
         }
     }
+
+    @GetMapping(value = "/folders/{foldername}/pdfs/{filename:.+}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<Resource> getFolderPdfFile(@PathVariable String foldername, @PathVariable String filename){
+        try{
+            Path basePath = pdfsDirPath.toAbsolutePath().normalize();
+            Path targetPath = basePath.resolve(foldername + "/" + filename).normalize();
+
+            if(!targetPath.startsWith(basePath) || !Files.exists(targetPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            Resource resource = new FileSystemResource(targetPath);
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(resource);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
