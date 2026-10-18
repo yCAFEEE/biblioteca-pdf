@@ -124,7 +124,7 @@ public class PdfController{
 
             Resource resource = new FileSystemResource(targetPath);
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(resource);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header("Content-Disposition", "inline; filename=\"" + filename + "\"").body(resource);
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -249,7 +249,7 @@ public class PdfController{
 
             Resource resource = new FileSystemResource(targetPath);
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(resource);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header("Content-Disposition", "inline; filename=\"" + filename + "\"").body(resource);
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
