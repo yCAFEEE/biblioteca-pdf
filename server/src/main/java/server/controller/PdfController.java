@@ -237,13 +237,39 @@ public class PdfController{
         }
     }
 
+    @GetMapping(value = "folders/{foldername:.+}/pdfs/{filename:.+}/cover", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> getFolderPdfCover(@PathVariable String foldername, @PathVariable String filename){
+        try{
+            Path targetPath = pdfsDirPath.resolve(foldername + "/" + filename).normalize();
+
+            if(!targetPath.startsWith(pdfsDirPath) || !Files.exists(targetPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Diretório inválido"));
+            }
+
+            try(PDDocument document = Loader.loadPDF(targetPath.toFile())){
+                if(document.getNumberOfPages() > 0){
+                    PDFRenderer pdfRenderer = new PDFRenderer(document);
+                    BufferedImage img = pdfRenderer.renderImageWithDPI(0, 90);
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ImageIO.write(img, "PNG", baos);
+
+                    return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(baos.toByteArray());
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Arquivo não encontrado"));
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao criar capa do arquivo"));
+        }
+    }
+
     @GetMapping(value = "/folders/{foldername}/pdfs/{filename:.+}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<Resource> getFolderPdfFile(@PathVariable String foldername, @PathVariable String filename){
         try{
-            Path basePath = pdfsDirPath.toAbsolutePath().normalize();
-            Path targetPath = basePath.resolve(foldername + "/" + filename).normalize();
+            Path targetPath = pdfsDirPath.resolve(foldername + "/" + filename).normalize();
 
-            if(!targetPath.startsWith(basePath) || !Files.exists(targetPath)){
+            if(!targetPath.startsWith(pdfsDirPath) || !Files.exists(targetPath)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
 
