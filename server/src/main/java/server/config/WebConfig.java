@@ -1,11 +1,8 @@
 package server.config;
 
-import java.nio.file.Paths;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -20,11 +17,5 @@ public class WebConfig implements WebMvcConfigurer{
             .allowedOrigins(frontendUrl, "http://localhost:5173")
             .allowedMethods("GET", "POST", "PUT", "DELETE")
             .allowedHeaders("Content-type", "Authorization");
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry){
-        String localPath = Paths.get("..", "client", "public", "pdfDir").toAbsolutePath().normalize().toUri().toString();
-        registry.addResourceHandler("pdfs/**").addResourceLocations(localPath);
     }
 }
