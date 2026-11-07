@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController 
 public class FolderController{
-    private final String pdfsDir = "../client/public/pdfDir";
+    private final String pdfsDir = "./pdfDir";
     private final Path pdfsDirPath = Path.of(pdfsDir);
 
     @GetMapping("/folders")

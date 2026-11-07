@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class PdfController{
-    private final String pdfsDir = "../client/public/pdfDir";
+    private final String pdfsDir = "./pdfDir";
     private final Path pdfsDirPath = Path.of(pdfsDir);
 
     @PostConstruct

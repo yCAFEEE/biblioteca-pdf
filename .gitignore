@@ -34,4 +34,4 @@ target/
 server/src/test/
 
 # Files inside pdfDir
-client/public/pdfDir/*
+server/pdfDir/*

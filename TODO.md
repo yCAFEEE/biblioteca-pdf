@@ -16,4 +16,4 @@
 - [ ] Feedback visual de carregamento de arquivos e pastas (mostrar um **"carregando..."** enquanto o backend não dá um retorno)
 
 ## Refatoração
-- [ ] Mover a pasta `pdfDir/` para `server/`
+- [x] Mover a pasta `pdfDir/` para `server/`
