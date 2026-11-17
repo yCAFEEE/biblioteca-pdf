@@ -8,11 +8,14 @@ export default function Home(){
     const [folders, setFolders] = useState([]);
     const [ordenacao, setOrdenacao] = useState("az");
     const [busca, setBusca] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [pontos, setPontos] = useState("");
 
     const buscarPdfs = () => {
+        setLoading(true);
         fetch(`${API}pdfs`)
         .then(r => r.json())
-        .then(setPdfs)
+        .then(data => {setPdfs(data), setLoading(false)})
         .catch(err => console.error("Falha ao buscar PDFs", err));
     };
 
@@ -120,48 +123,65 @@ export default function Home(){
         .catch(err => console.error("Erro ao renomear pasta", err))
     }
 
+    useEffect(() => {
+        if(!loading) return;
+
+        const intervalo = setInterval(() => {
+            setPontos(prev => (prev.length >= 3 ? "" : prev + "."))
+        }, 200);
+
+        return () => clearInterval(intervalo);
+    })
+
     return(
         <>
             <main>
                 <div className="content-container">
                     <h1>Biblioteca PDF</h1>
-                    {pdfs.length === 0 ? (
-                        <div className="error-container">
-                            <h2>Erro</h2>
-                            <p>Erro no servidor ou nenhum arquivo PDF encontrado no caminho: ./client/public/pdfDir/</p>
+                    {loading ? (
+                        <div className="loading-container">
+                            <p>Carregando arquivos{pontos}</p>
                         </div>
                     ) : (
-                    <div className="pdfs-container">
-                        <div className="filter-container">
-                            <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
-                                <option value="az">Ordem alfabética A-Z</option>
-                                <option value="za">Ordem alfabética Z-A</option>
-                                <option value="pag-cres">Ordem crescente de páginas</option>
-                                <option value="pag-decres">Ordem decrescente de páginas</option>
-                            </select>
-                            <input type="search" placeholder="Buscar arquivo..." value={busca} onChange={(e) => setBusca(e.target.value)}/>
-                        </div>
-
-                        {sortedPdfs.length === 0 ? (
-                            <p>Nenhum arquivo encontrado com o nome "{busca}"</p>
+                        pdfs.length === 0 ? (
+                            <div className="error-container">
+                                <h2>Erro</h2>
+                                <p>Nenhum arquivo PDF foi encontrado.</p>
+                                <p>Tente enviar um arquivo na seção de envio.</p>
+                            </div>
                         ) : (
-                            <ul>
-                                {sortedPdfs.map((pdf, idx) => (
-                                    <li className="pdf-box" key={idx}>
-                                        <div className="pdf-buttons">
-                                            <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
-                                            <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
-                                        </div>
-                                        <img src={pdf.thumbnail ? pdf.thumbnail : "../../pdf-placeholder.png"} alt={`Capa de ${pdf.name}`} onError={(e) => {e.target.src = "../../pdf-placeholder.png"}} />
-                                        <div className="pdf-info">
-                                            <a href={`${API}${pdf.url}`}>{pdf.name}</a>
-                                            <p>{pdf.pages} págs.</p>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
+                            <div className="pdfs-container">
+                                <div className="filter-container">
+                                    <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)}>
+                                        <option value="az">Ordem alfabética A-Z</option>
+                                        <option value="za">Ordem alfabética Z-A</option>
+                                        <option value="pag-cres">Ordem crescente de páginas</option>
+                                        <option value="pag-decres">Ordem decrescente de páginas</option>
+                                    </select>
+                                    <input type="search" placeholder="Buscar arquivo..." value={busca} onChange={(e) => setBusca(e.target.value)}/>
+                                </div>
+
+                                {sortedPdfs.length === 0 ? (
+                                    <p>Nenhum arquivo encontrado com o nome "{busca}"</p>
+                                ) : (
+                                    <ul>
+                                        {sortedPdfs.map((pdf, idx) => (
+                                            <li className="pdf-box" key={idx}>
+                                                <div className="pdf-buttons">
+                                                    <button onClick={() => renameFile(pdf.name)} id="renomear-button">Renomear</button>
+                                                    <button onClick={() => handleFileDelete(pdf.name)} id="deletar-button">Deletar</button>
+                                                </div>
+                                                <img src={pdf.thumbnail ? pdf.thumbnail : "../../pdf-placeholder.png"} alt={`Capa de ${pdf.name}`} onError={(e) => {e.target.src = "../../pdf-placeholder.png"}} />
+                                                <div className="pdf-info">
+                                                    <a href={`${API}${pdf.url}`}>{pdf.name}</a>
+                                                    <p>{pdf.pages} págs.</p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        )
                     )}
 
                     {/* Isso é provisório. A ideia é posteriormente deixar pastas e arquivos no mesmo container */}

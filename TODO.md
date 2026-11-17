@@ -13,7 +13,7 @@
 - [ ] Deve ser possível selecionar arquivos na aplicação. Caso os arquivos estejam na pasta principal, deve ser exibido a função de **"Mover para uma pasta"** que, ao ser clicada, mostre uma tela para selecionar uma pasta (ou mais de uma pasta) em que deseja mover os arquivos. Caso os arquivos estejam em uma pasta criada, deve ser exibido a função de **"Mover para a pasta principal"** que, ao ser clicada, moverá todos os arquivos selecionados para a pasta principal.
 
 ## UX
-- [ ] Feedback visual de carregamento de arquivos e pastas (mostrar um **"carregando..."** enquanto o backend não dá um retorno)
+- [x] Feedback visual de carregamento de arquivos e pastas (mostrar um **"carregando..."** enquanto o backend não dá um retorno)
 
 ## Refatoração
 - [x] Mover a pasta `pdfDir/` para `server/`

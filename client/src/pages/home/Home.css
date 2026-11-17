@@ -9,6 +9,14 @@ main{
     gap: 10px;
 }
 
+.loading-container p{
+    font-size: 18px;
+}
+
+.error-container{
+    width: 100%;
+}
+
 .filter-container{
     display: flex;
     justify-content: space-between;
