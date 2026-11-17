@@ -6,6 +6,7 @@
 
 ### Arquivos e pastas
 - [ ] Trocar botões de **"Renomear"** e **"Deletar"** por um botão multifunção **"..."** que, ao ser clicado, exibirá as funções **"Renomear"**, **"Deletar"** e **"Mover para pasta principal"** (caso o arquivo esteja dentro de uma pasta criada) em um menu suspenso ao lado do pdf-box.
+- [ ] Visualizador de pdfs.
 
 ### Arquivos e pastas (ideias mais complexas que serão implementadas no futuro)
 - [ ] Função de clicar e arrastar um arquivo na pasta principal para uma pasta criada. (Drag and Drop)
