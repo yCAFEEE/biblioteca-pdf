@@ -20,6 +20,8 @@ import jakarta.annotation.PostConstruct;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +71,7 @@ public class PdfController{
 
                     Map<String, String> pdfInfo = new HashMap<>();
                     pdfInfo.put("name", name);
-                    pdfInfo.put("url", "pdfs-files/" + encodedName);
+                    pdfInfo.put("url", "pdfs/" + encodedName);
                     pdfInfo.put("pages", String.valueOf(pagesCount));
                     pdfInfo.put("thumbnail", "http://localhost:8080/pdfs/" + encodedName + "/cover");
 
@@ -109,7 +111,25 @@ public class PdfController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro ao criar capa do arquivo"));
         }
     }
-    
+
+    @GetMapping(value = "/pdfs/{filename:.+}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<Resource> getPdfFile(@PathVariable String filename){
+        try{
+            Path basePath = pdfsDirPath.toAbsolutePath().normalize();
+            Path targetPath = basePath.resolve(filename).normalize();
+
+            if(!targetPath.startsWith(basePath) || !Files.exists(targetPath)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            Resource resource = new FileSystemResource(targetPath);
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header("Content-Disposition", "inline; filename=\"" + filename + "\"").body(resource);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @PostMapping("/pdfs")
     public ResponseEntity<?> uploadPdf(@RequestParam MultipartFile file){
@@ -128,7 +148,7 @@ public class PdfController{
             }
             Map<String, String> fileInfo = new HashMap<>();
             fileInfo.put("name", name);
-            fileInfo.put("url", "pdfs-files/" + encodedName);
+            fileInfo.put("url", "pdfs/" + encodedName);
             fileInfo.put("pages", String.valueOf(pagesCount));
 
             return ResponseEntity.ok(fileInfo);
